@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Login - Library System</title>
+    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="login-container">
+        <form id="loginForm" action="login.php" method="POST" class="login-form">
+            <h2>Resulto</h2>
+            <p id="form-instruction">Enter your details to access your account.</p>
+
+            <div class="input-group">
+                <label for="role">Log in as</label>
+                <select name="role" id="role" required>
+                    <option value="student">Select</option>
+                    <option value="student">Student</option>
+                    <option value="admin">Administrator</option>
+                </select>
+            </div>
+
+            <div class="input-group" id="name-group">
+                <label for="name">User_Name</label>
+                <input type="text" id="name" name="name" placeholder="Enter your registered name">
+            </div>
+
+            <div class="input-group" id="identifier-group">
+                <label id="identifier-label" for="identifier">Roll Number</label>
+                <input type="text" id="identifier" name="identifier" required placeholder="e.g. 2023-CS-01">
+            </div>
+
+            <div class="input-group" id="password-group" style="display: none;">
+                <label for="password">Password</label>
+                <div class="password-wrapper">
+                    <input type="password" id="password" name="password" placeholder="••••••••">
+                    <i class="fa-regular fa-eye" id="togglePassword"></i>
+                </div>
+            </div>
+
+            <button type="submit" class="login-btn">Log In</button>
+            
+        </form>
+    </div>
+    <script src="login.js"></script>
+</body>
+</html>
