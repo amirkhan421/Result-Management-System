@@ -34,6 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['user_id'] = $user['student_id'];
             $_SESSION['user_name'] = $user['student_name'];
             $_SESSION['user_role'] = 'student';
+            $_SESSION['roll_no_identifier'] = $identifier;
             header("Location: student_dashboard.php");
             exit;
         } else {
