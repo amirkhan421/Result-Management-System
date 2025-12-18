@@ -1,0 +1,695 @@
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    /* Applying Roboto globally */
+    font-family: 'Roboto', sans-serif;
+} 
+:root {
+    --navy-bg: #16243d;        /* Deep Navy from your image */
+    --gold-solid: #c5a059;     /* Solid Gold */
+    --glass-fill: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
+}
+body{
+    margin: 0%;
+    padding: 0%;
+    position: relative;
+    background-color :var(--navy-bg);
+    font-family: Roboto;
+}
+
+.main-header {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+.glass-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background:var(--navy-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    padding: 12px 40px;
+    /* Pill shape for elite look */
+    transition: 0.4s ease;
+}
+
+/* Logo Styling */
+.logo-container { display: flex; align-items: center; gap: 12px; }
+.logo-box {
+    background: var(--accent-gold);
+    color: #fff;
+    padding: 8px 12px;
+    font-weight: 800;
+    border-radius: 8px;
+    font-family: 'Cinzel', serif;
+}
+.uni-name { display: block; font-weight: 700; font-size: 14px; color: #fff; letter-spacing: 1px; }
+.uni-loc { font-size: 10px; color: var(--accent-gold); letter-spacing: 3px; }
+
+/* Desktop Menu Options */
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 25px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: rgba(185, 218, 226, 0.952);
+    font-size: 13px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: 0.3s;
+}
+
+.nav-links a:hover { color: #ffff; }
+
+/* Portal Button */
+.portal-btn-nav {
+    background: rgba(197, 160, 89, 0.1);
+    border: 1px solid white;
+    color:rgba(185, 218, 226, 0.952) ;
+    padding: 8px 20px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.portal-btn-nav:hover {
+    background-color:transparent;
+    color: #fff;
+}
+
+/* Hamburger Icon logic */
+.hamburger {
+    display: none; /* Hidden by default on big screens */
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-left: 20px;
+}
+
+.bar {
+    width: 25px;
+    height: 2px;
+    background: #fff;
+    transition: 0.3s;
+}
+
+/* TABLET AND MOBILE RESPONSIVENESS */
+@media (max-width: 1024px) {
+    .nav-links {
+        display: none; /* Hide 7 options on tablet */
+    }
+
+    .hamburger {
+        display: flex; /* Show hamburger even on Tablet */
+    }
+    
+    .glass-nav {
+        padding: 10px 25px;
+        border-radius: 20px;
+    }
+}
+
+/* Simple Mobile Overlay styling */
+.mobile-overlay {
+    position: fixed;
+    top: 0; right: -100%;
+    width: 250px; height: 100vh;
+    background: rgba(10, 25, 47, 0.98);
+    backdrop-filter: blur(10px);
+    transition: 0.4s;
+    padding-top: 100px;
+    border-left: 1px solid var(--nav-border);
+}
+
+.mobile-overlay.active { right: 0; }
+
+.mobile-links { list-style: none; text-align: center; }
+.mobile-links li { margin-bottom: 30px; }
+.mobile-links a { text-decoration: none; color: rgb(26, 1, 1); font-size: 18px; }
+
+/*  %%%%%%%%%%%%%%%%%%%%% End of Header %%%%%%%%%%%%%%%%%%%%%%%%5 */
+/* Slider Container */
+.slider-container {
+    position: relative;
+    height: 100vh; /* Full Viewport Height */
+    width: 100%;
+    overflow: hidden;
+    margin-top: -100px; /* Pulls slider behind the sticky header */
+}
+
+.slide {
+    position: absolute;
+    top: 15%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    
+    opacity: 0;
+    transition: opacity 1.5s ease-in-out; /* Smooth Fade */
+    z-index: 1;
+}
+
+.slide.active {
+    opacity: 1;
+    z-index: 2;
+}
+
+/* Content inside the slide */
+.slide-content {
+    max-width: 800px;
+    z-index: 10;
+}
+
+.slide-content span {
+    color: #ffff;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-weight: 700;
+    font-size: 14px;
+    display: block;
+    margin-bottom: 20px;
+}
+
+.slide-content h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 3.5rem;
+    color: white;
+    line-height: 1.1;
+    margin-bottom: 30px;
+}
+
+.gold-text {
+    color:var(--gold-solid);
+}
+
+/* Buttons in Slider */
+.slider-btns {
+    display: flex;
+    gap: 20px;
+}
+
+.btn-solid {
+   background: transparent;
+    border: 2px solid white;
+    color: white;
+    padding: 15px 35px;
+    font-weight: 700;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 2px solid white;
+    color: white;
+    padding: 15px 35px;
+    font-weight: 700;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-solid:hover { transform: translateY(-3px); background: #fff;color: #030812; }
+.btn-outline:hover { transform: translateY(-3px); background: #fff;color: #000; }
+
+/* Dots Navigation */
+.slider-nav {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 15px;
+    z-index: 20;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.dot.active {
+    background: var(--accent-gold);
+    width: 30px; /* Stretched dot for active slide */
+    border-radius: 10px;
+}
+/* ###########################33 Slider ends here */
+.section-container {
+    padding: 80px 10%;
+    text-align: center;
+}
+
+.section-title {
+    font-family: 'Cinzel', serif;
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    color: var(--gold-solid);
+    
+}
+p{
+    color:var(--gold-solid);
+}
+
+.section-title span { color: var(--gold-solid); }
+
+.grid-4 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+    margin-top: 50px;
+}
+
+/* Glass Card Mini Style (Why Choose TU) */
+.glass-card-mini {
+    background: var(--navy-bg);
+    border: 1px solid var(--gold-solid);
+    padding: 30px;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+}
+
+.glass-card-mini:hover {
+   border: 3px solid #92400e; 
+   display: flex;
+   flex-direction: column;
+    align-items: center;
+    justify-content: center; 
+    transform: translateY(-10px);
+}
+
+.icon-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    width: 80px;
+    height: 80px;
+    background:  #003759; 
+    border-radius: 30%;
+    margin-bottom: 20px;
+    color: #92400e;
+    
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+}
+
+/* Updated Hover State for Right Tilt */
+.icon-circle:hover { 
+    transform: rotate(15deg) scale(1.1);
+    background:  #003759; 
+    color: var(--navy-solid);
+    
+    box-shadow: -5px 10px 20px rgba(197, 160, 89, 0.3);
+}
+
+.Welcome{   
+    padding: 4%;
+    text-align: center;
+background-color: #92400e;
+color: #fff;
+}
+
+.welcome{
+    margin-top: 20px;
+    text-align: justify;
+    color: #fff;
+}
+/* Custom Variables for this section */
+
+
+.section-container {
+    background-color: var(--navy-bg);
+    padding: 100px 8%;
+    text-align: center;
+    color: #ffffff;
+}
+
+.section-header h2 {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    letter-spacing: 1px;
+}
+
+.section-header p {
+    color: #b0b8c4;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 60px;
+}
+
+/* Grid Layout */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+/* Glass Feature Card */
+.glass-feature-card {
+    background: var(--glass-fill);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    padding: 40px 30px;
+    border-radius: 20px;
+    transition: all 0.4s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.glass-feature-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--gold-solid);
+    transform: translateY(-10px); /* Slight lift */
+}
+
+/* --- THE TILTING ICON --- */
+.icon-circle {
+    width: 90px;
+    height: 90px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: var(--gold-solid);
+    margin-bottom: 25px;
+    /* Professional bounce transition */
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Tilt Right on Card Hover */
+.glass-feature-card:hover .icon-circle {
+    transform: rotate(15deg) scale(1.1); /* Tilts RIGHT */
+    background: var(--gold-solid);
+    color: var(--navy-bg);
+    box-shadow: 0 10px 20px rgba(197, 160, 89, 0.3);
+}
+
+/* Text Styles inside Card */
+.glass-feature-card h3 {
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+    color: #ffffff;
+}
+
+.glass-feature-card p {
+    font-size: 0.95rem;
+    color: #b0b8c4;
+    line-height: 1.5;
+}
+
+
+
+
+/* VC Section Style */
+.vc-section {
+    padding: 60px 10%;
+
+    border: var(--gold-solid);
+  } 
+
+
+.vc-container {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    padding: 50px;
+    color:var(--gold-solid);
+    border: 2px solid var(--gold-solid);
+    background: var(--navy-bg);
+    backdrop-filter: blur(15px);
+    border-radius: 30px;
+}
+
+.vc-content { flex: 1; }
+.vc-image img {
+    width: 350px;
+    border-radius: 20px;
+   
+}
+.message{
+    color: #fff;
+}
+
+/* Counter strip */
+.counter-strip {
+    background:#92400e;
+    display: flex;
+    justify-content: space-around;
+    padding: 50px 10%;
+    margin: 40px 0;
+}
+
+.counter-box h3 { font-size: 3rem; color: #ffff; }
+
+/* gallery */
+/* Gallery Section Colors */
+:root {
+    --navy-primary: #003759;
+    --gold-accent: #C5A059;
+    --bg-light: #ffffff; /* Clean white background as per image */
+}
+
+.gallery-section {
+    padding: 80px 8%;
+    background-color: var(--bg-light);
+    text-align: center;
+}
+
+/* Title Styling with Navy Underline */
+.gallery-section h2 {
+    font-size: 2.5rem;
+    color: #000;
+    margin-bottom: 5px;
+}
+
+.navy-text { color: var(--navy-primary); }
+
+.title-underline {
+    width: 60px;
+    height: 4px;
+    background: var(--navy-primary);
+    margin: 0 auto 20px;
+    border-radius: 2px;
+}
+
+.gallery-section p {
+    color: #666;
+    margin-bottom: 50px;
+    font-size: 1.1rem;
+}
+
+/* Gallery Layout */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+/* Professional Image Cards */
+.gallery-card {
+    position: relative;
+    border-radius: 25px; /* Matches the curved corners in your image */
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: all 0.4s ease;
+    cursor: pointer;
+    line-height: 0; /* Removes bottom whitespace */
+}
+
+.gallery-card img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover; /* Ensures images don't stretch */
+    transition: transform 0.6s ease;
+}
+
+/* Elite Hover Effect */
+.gallery-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 55, 89, 0.15);
+}
+
+.gallery-card:hover img {
+    transform: scale(1.1);
+}
+
+/* Subtle Overlay on Hover */
+.image-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(to bottom, transparent, rgba(0, 55, 89, 0.2));
+    opacity: 0;
+    transition: 0.3s;
+}
+
+.gallery-card:hover .image-overlay {
+    opacity: 1;
+}
+/* Footer Base Styling */
+.main-footer {
+    background-color: #000c24; /* Deep Navy background from image */
+    color: #ffffff;
+    padding: 60px 8% 20px;
+    font-family: 'Roboto', sans-serif;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-top {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1.2fr 1fr;
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+/* Brand/Logo Section */
+.footer-logo-circle {
+    width: 150px;
+    height: 150px;
+    background: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 25px;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+.footer-logo-circle img {
+    width: 100%;
+    object-fit: contain;
+    border-radius: 100%;
+}
+
+.social-icons {
+    display: flex;
+    gap: 15px;
+}
+
+.social-icons a {
+    width: 35px;
+    height: 35px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.social-icons a:hover {
+    background: var(--gold-solid);
+    color: #000c24;
+}
+
+/* Title and Links */
+.footer-title {
+    font-size: 1.2rem;
+    margin-bottom: 25px;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+/* The Gold underline from your image */
+.footer-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 40px;
+    height: 3px;
+    background: #ff8c00; /* Vibrant Orange-Gold accent */
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-links li {
+    margin-bottom: 15px;
+}
+
+.footer-links a, .contact-item p {
+    color: #b0b8c4;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: 0.3s;
+}
+
+.footer-links a:hover {
+    color: #ff8c00;
+    padding-left: 5px;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.contact-icon {
+    background: #ff8c00;
+    color: #fff;
+    width: 30px;
+    height: 30px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+}
+
+/* Copyright Section */
+.footer-bottom {
+    text-align: center;
+    padding-top: 30px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.footer-bottom p {
+    font-size: 0.9rem;
+    color: #b0b8c4;
+}
+
+.developer a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
