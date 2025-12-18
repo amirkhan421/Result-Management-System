@@ -8,11 +8,12 @@
 ### ap ny krna kiya hai git download krni hai vscode mai git lens extention 3rd vs code ko github ky sath connect kr lena hai 
 ### yeh to ho gya extention related 
 ### ap code ka batati hoon first landing page done
-### login for student and admin complete bwith backend done
-### student portal course mistach wala seen hai hr semester mai same subject aa rahy aik masla
+### login for student and admin complete bwith backend done 
 ### admin portal mai kah skty dumbest logic semester  wise result summary  lagaya hua but still working fine 
 ### mery khiyal mai sir ky hisab sy yeh yahi rahny dety 
-### yani scheme laga kr pehle 2 3 students ky ubject bhi semester wise differnt kr deyn hum to bhot hai konsa fyp hai
+### backend issue ho gya hai student portal ki theme to match ho gye hai lekin baki sb gya
+### ab 2 option aik 3rd commit wali file rewind kron 
+### koi faida ni at least current ki theme same hai masla hl ho jaye ga
 ### dusra db update ki the wo file bhi add kr di hai result managemnt (3).sql 
 ### git ky ilwa normal sy extensions hain personaltion wali   themes icons bracket closer 
 ### 2nd mai code khud to ni likh rahi sb gemini chl rahi 
