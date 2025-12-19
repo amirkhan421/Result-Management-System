@@ -21,3 +21,5 @@
 ## Contributions
 - Amir Khan – kxh kxh smjh aa rhi hy but agr thori video bnaa kr send kr deti to clear ho jata , ab yh sb aap ny vs code mn bnaya hy or konsi extensions download ki hyn ?
 - is it possible on the wide screen , check this link also , https://ai.studio/apps/drive/1bkbcZGburuIV57qQ5Jl6G8QrWI3Y_UaE?fullscreenApplet=true
+
+<img width="1299" height="686" alt="Screenshot from 2025-12-20 01-46-02" src="https://github.com/user-attachments/assets/d09fe6dc-1a60-4b92-ab83-0727da38eff4" />
