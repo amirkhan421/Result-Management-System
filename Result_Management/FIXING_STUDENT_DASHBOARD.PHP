@@ -1,10 +1,4 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-?>
-
-<?php
 session_start();
 require "config.php";
 
@@ -17,40 +11,38 @@ if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'student') {
 $user_name = $_SESSION['user_name'];
 $roll_no_id = $_SESSION['roll_no_identifier'];
 
-// 1. Fetch Batch ID
-$stmt = $conn->prepare("SELECT batch_id FROM students WHERE student_roll_no = ?");
+// 1. Fetch Semester Summaries (to get the GPA for each semester)
+$summaries = [];
+$sum_q = "SELECT * FROM semester_summary WHERE student_roll_no = ?";
+$stmt = $conn->prepare($sum_q);
 $stmt->bind_param("s", $roll_no_id);
 $stmt->execute();
-$batch_res = $stmt->get_result()->fetch_assoc();
-$batch_id = $batch_res['batch_id'] ?? 0;
-
-// 2. Fetch Full Curriculum (Subject Details)
-// We store this in a flat array indexed by subject_code for easy lookup
-$subject_details = [];
-$curr_q = "SELECT sm.subject_code, sm.subject_name, sm.credit_hours 
-           FROM subject_master sm";
-$res = $conn->query($curr_q);
-while ($row = $res->fetch_assoc()) {
-    $subject_details[$row['subject_code']] = $row;
+$sum_res = $stmt->get_result();
+while ($row = $sum_res->fetch_assoc()) {
+    $summaries[$row['semester_number']] = $row;
 }
 
-// 3. Fetch Actual Results grouped by Semester
+// 2. Fetch Detailed Results with Subject Titles and Credits
 $marks = [];
-$marks_q = "SELECT * FROM semester_results WHERE student_roll_no = ? ORDER BY semester_number ASC";
+$marks_q = "SELECT r.*, sm.subject_name, sm.credit_hours 
+            FROM semester_results r 
+            LEFT JOIN subject_master sm ON TRIM(r.course_code) = TRIM(sm.subject_code)
+            WHERE r.student_roll_no = ? 
+            ORDER BY r.semester_number ASC";
 $stmt = $conn->prepare($marks_q);
 $stmt->bind_param("s", $roll_no_id);
 $stmt->execute();
 $marks_res = $stmt->get_result();
-
 while ($row = $marks_res->fetch_assoc()) {
     $marks[$row['semester_number']][] = $row;
 }
 
-// Variables for global stats
+// Global Variables for Top Summary Cards
 $total_cr = 0; 
-$total_pts = 0; 
+$total_gpts = 0; 
 $total_obt = 0; 
 $total_poss = 0;
+$total_weight_sum = 0; // Added to handle correct CGPA weighting
 ?>
 
 <!DOCTYPE html>
@@ -273,11 +265,10 @@ $total_poss = 0;
 
     <div class="stats-grid" id="stats-area"></div>
 
-    <?php 
-// Loop through the results we actually found for this student
+<?php 
 foreach ($marks as $semNum => $semesterRow):
-    $s_cr = 0;
-    $s_pts = 0;
+    $semSummary = isset($summaries[$semNum]) ? $summaries[$semNum] : null;
+    $semGPA = $semSummary ? $semSummary['gpa'] : "0.00";
 ?>
 <div class="sem-card">
     <div class="sem-header">SEMESTER <?php echo $semNum; ?></div>
@@ -293,53 +284,41 @@ foreach ($marks as $semNum => $semesterRow):
         </thead>
         <tbody>
         <?php foreach ($semesterRow as $mRow): 
-            $course_code = $mRow['course_code'];
-            // Look up subject info from our master list
-            $sub = $subject_details[$course_code] ?? ['subject_name' => 'Unknown', 'credit_hours' => 0];
-
-            $credit = $sub['credit_hours'];
-            $marks_obt = $mRow['marks_obtained'];
-            $grade_pts = $mRow['grade_point_total'];
-
-            // Update Global Totals
-            $total_cr   += $credit;
-            $total_pts  += ($grade_pts * $credit);
-            $total_obt  += $marks_obt;
-            $total_poss += 100; 
-
-            // Update Semester Totals
-            $s_cr  += $credit;
-            $s_pts += ($grade_pts * $credit);
+            // FIX: Map 'Credits' column to grade_point_total from semester_results table
+            $earned_credit = (float)($mRow['grade_point_total'] ?? 0); 
+            $subject_weight = (int)($mRow['credit_hours'] ?? 0);
+            
+            // Accumulate Global Totals
+            $total_cr   += $earned_credit; // This will populate the "Credits Earned" card
+            $total_gpts += ($earned_credit * $subject_weight);
+            $total_weight_sum += $subject_weight;
+            
+            $total_obt  += $mRow['marks_obtained'];
+            $total_poss += 100;
         ?>
         <tr>
-            <td><?php echo htmlspecialchars($course_code); ?></td>
-            <td><?php echo htmlspecialchars($sub['subject_name']); ?></td>
-            <td><?php echo $credit; ?></td>
-            <td><?php echo $marks_obt; ?></td>
+            <td><?php echo htmlspecialchars($mRow['course_code']); ?></td>
+            <td><?php echo htmlspecialchars($mRow['subject_name'] ?? 'Unknown'); ?></td>
+            <td><?php echo number_format($earned_credit, 2); ?></td>
+            <td><?php echo $mRow['marks_obtained']; ?></td>
             <td><span class="grade-badge"><?php echo $mRow['grade_letter']; ?></span></td>
         </tr>
         <?php endforeach; ?>
 
         <tr class="gpa-row">
             <td colspan="4" style="text-align:right;">Semester GPA</td>
-            <td><?php echo ($s_cr > 0) ? number_format($s_pts / $s_cr, 2) : '0.00'; ?></td>
+            <td><strong><?php echo number_format($semGPA, 2); ?></strong></td>
         </tr>
         </tbody>
     </table>
 </div>
 <?php endforeach; ?>
 
-
-    <?php 
-    $final_cgpa = ($total_cr > 0) 
-    ? number_format($total_pts / $total_cr, 2) 
-    : '0.00';
-
-$final_per = ($total_poss > 0) 
-    ? number_format(($total_obt / $total_poss) * 100, 2) 
-    : '0.00';
-
-    ?>
+<?php 
+// Calculate Final CGPA based on weights
+$final_cgpa = ($total_weight_sum > 0) ? number_format($total_gpts / $total_weight_sum, 2) : '0.00';
+$final_per = ($total_poss > 0) ? number_format(($total_obt / $total_poss) * 100, 2) : '0.00';
+?>
 </div>
 
 <script>
@@ -354,7 +333,7 @@ $final_per = ($total_poss > 0)
         </div>
         <div class="stat-card">
             <div class="stat-label">Credits Earned</div>
-            <div class="stat-value">${'<?php echo $total_cr; ?>'}</div>
+            <div class="stat-value">${'<?php echo number_format($total_cr, 2); ?>'}</div>
         </div>
         <div class="stat-card">
             <div class="stat-label">Marks Summary</div>
