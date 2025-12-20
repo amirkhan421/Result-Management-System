@@ -22,21 +22,28 @@ while ($row = $sum_res->fetch_assoc()) {
     $summaries[$row['semester_number']] = $row;
 }
 
-// 2. Fetch Detailed Results with Subject Titles and Credits
+// 2. Fetch Detailed Results directly from semester_results
 $marks = [];
-$marks_q = "SELECT r.*, sm.subject_name, sm.credit_hours 
-            FROM semester_results r 
-            LEFT JOIN subject_master sm ON TRIM(r.course_code) = TRIM(sm.subject_code)
-            WHERE r.student_roll_no = ? 
-            ORDER BY r.semester_number ASC";
+// We no longer JOIN with subject_master because subject_name is in this table
+$marks_q = "SELECT 
+                course_code, 
+                subject_name, 
+                marks_obtained, 
+                grade_point_total, 
+                grade_letter, 
+                semester_number 
+            FROM semester_results 
+            WHERE student_roll_no = ? 
+            ORDER BY semester_number ASC";
+
 $stmt = $conn->prepare($marks_q);
 $stmt->bind_param("s", $roll_no_id);
 $stmt->execute();
 $marks_res = $stmt->get_result();
+
 while ($row = $marks_res->fetch_assoc()) {
     $marks[$row['semester_number']][] = $row;
 }
-
 // Global Variables for Top Summary Cards
 $total_cr = 0; 
 $total_gpts = 0; 
@@ -284,26 +291,31 @@ foreach ($marks as $semNum => $semesterRow):
         </thead>
         <tbody>
         <?php foreach ($semesterRow as $mRow): 
-            // FIX: Map 'Credits' column to grade_point_total from semester_results table
-            $earned_credit = (float)($mRow['grade_point_total'] ?? 0); 
-            $subject_weight = (int)($mRow['credit_hours'] ?? 0);
-            
-            // Accumulate Global Totals
-            $total_cr   += $earned_credit; // This will populate the "Credits Earned" card
-            $total_gpts += ($earned_credit * $subject_weight);
-            $total_weight_sum += $subject_weight;
-            
-            $total_obt  += $mRow['marks_obtained'];
-            $total_poss += 100;
-        ?>
-        <tr>
-            <td><?php echo htmlspecialchars($mRow['course_code']); ?></td>
-            <td><?php echo htmlspecialchars($mRow['subject_name'] ?? 'Unknown'); ?></td>
-            <td><?php echo number_format($earned_credit, 2); ?></td>
-            <td><?php echo $mRow['marks_obtained']; ?></td>
-            <td><span class="grade-badge"><?php echo $mRow['grade_letter']; ?></span></td>
-        </tr>
-        <?php endforeach; ?>
+    // 1. Get values from the row
+    $earned_credits = (float)($mRow['grade_point_total'] ?? 0); 
+    
+    // IMPORTANT: Since you are not using subject_master, 
+    // we assume 'credit_hours' is also in your semester_results table.
+    // If it's named differently (e.g., 'cr_hr'), change it here.
+    $subj_weight = (float)($mRow['credit_hours'] ?? 3.0); 
+    
+    // 2. Accumulate Global Totals for CGPA
+    $total_cr         += $earned_credits; 
+    $total_obt        += $mRow['marks_obtained'];
+    $total_poss       += 100;
+    
+    // GPA Calculation Logic: Sum of (Grade Point * Credit Hours) / Total Credit Hours
+    $total_gpts       += ($earned_credits * $subj_weight);
+    $total_weight_sum += $subj_weight;
+?>
+<tr>
+    <td><?php echo htmlspecialchars($mRow['course_code']); ?></td>
+    <td><?php echo htmlspecialchars($mRow['subject_name'] ?? 'N/A'); ?></td>
+    <td><?php echo number_format($earned_credits, 2); ?></td>
+    <td><?php echo $mRow['marks_obtained']; ?></td>
+    <td><span class="grade-badge"><?php echo $mRow['grade_letter']; ?></span></td>
+</tr>
+<?php endforeach; ?>
 
         <tr class="gpa-row">
             <td colspan="4" style="text-align:right;">Semester GPA</td>
@@ -315,8 +327,10 @@ foreach ($marks as $semNum => $semesterRow):
 <?php endforeach; ?>
 
 <?php 
-// Calculate Final CGPA based on weights
+// Calculate Final CGPA: Total Weighted Points / Total Credit Hours
 $final_cgpa = ($total_weight_sum > 0) ? number_format($total_gpts / $total_weight_sum, 2) : '0.00';
+
+// Calculate Aggregate Percentage
 $final_per = ($total_poss > 0) ? number_format(($total_obt / $total_poss) * 100, 2) : '0.00';
 ?>
 </div>
