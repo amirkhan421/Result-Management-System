@@ -46,12 +46,19 @@ while ($row = $marks_res->fetch_assoc()) {
 }
 // Global Variables for Top Summary Cards
 $total_cr = 0; 
-$total_gpts = 0; 
 $total_obt = 0; 
 $total_poss = 0;
-$total_weight_sum = 0; // Added to handle correct CGPA weighting
-?>
 
+// NEW CGPA LOGIC: Average of Semester GPAs
+$total_semester_gpa_sum = 0;
+$semester_count = count($summaries);
+
+foreach ($summaries as $summary) {
+    $total_semester_gpa_sum += (float)($summary['gpa'] ?? 0);
+}
+
+$final_cgpa = ($semester_count > 0) ? number_format($total_semester_gpa_sum / $semester_count, 2) : '0.00';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -291,22 +298,12 @@ foreach ($marks as $semNum => $semesterRow):
         </thead>
         <tbody>
         <?php foreach ($semesterRow as $mRow): 
-    // 1. Get values from the row
     $earned_credits = (float)($mRow['grade_point_total'] ?? 0); 
     
-    // IMPORTANT: Since you are not using subject_master, 
-    // we assume 'credit_hours' is also in your semester_results table.
-    // If it's named differently (e.g., 'cr_hr'), change it here.
-    $subj_weight = (float)($mRow['credit_hours'] ?? 3.0); 
-    
-    // 2. Accumulate Global Totals for CGPA
-    $total_cr         += $earned_credits; 
-    $total_obt        += $mRow['marks_obtained'];
-    $total_poss       += 100;
-    
-    // GPA Calculation Logic: Sum of (Grade Point * Credit Hours) / Total Credit Hours
-    $total_gpts       += ($earned_credits * $subj_weight);
-    $total_weight_sum += $subj_weight;
+    // Accumulate Global Totals for the header cards
+    $total_cr   += $earned_credits; 
+    $total_obt  += $mRow['marks_obtained'];
+    $total_poss += 100;
 ?>
 <tr>
     <td><?php echo htmlspecialchars($mRow['course_code']); ?></td>
@@ -327,9 +324,6 @@ foreach ($marks as $semNum => $semesterRow):
 <?php endforeach; ?>
 
 <?php 
-// Calculate Final CGPA: Total Weighted Points / Total Credit Hours
-$final_cgpa = ($total_weight_sum > 0) ? number_format($total_gpts / $total_weight_sum, 2) : '0.00';
-
 // Calculate Aggregate Percentage
 $final_per = ($total_poss > 0) ? number_format(($total_obt / $total_poss) * 100, 2) : '0.00';
 ?>
