@@ -17,7 +17,11 @@
 - Amir Khan – AB JO NEW CODE WALI FILE UPLOAD KI HY USS KO RUN KR KY DEKHO , ABHI OR WORK KR RHA HN  , UMMED HY THEEK HP JAY GA , <img width="1296" height="644" alt="Screenshot from 2025-12-20 16-41-18" src="https://github.com/user-attachments/assets/9a1a45fa-05c3-45ed-b766-8c91a79f59ac" />
 
 -semester results table mn myn ny aik column subject_name ka add kia hy , smst reslt table waly course code ko use kia hy srf subject name ko fetch krny kaliay
-<img width="1299" height="644" alt="Screenshot from 2025-12-21 01-59-41" src="https://github.com/user-attachments/assets/faa7d4b7-8fbc-44c9-91ce-79397cd573d3" />
+
+
+<img width="1299" height="644" alt="Screenshot from 2025-12-21 02-19-04" src="https://github.com/user-attachments/assets/16d4e60a-8dce-40be-8222-2b54882a4556" />
+
+
 
 
 
